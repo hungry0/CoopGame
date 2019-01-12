@@ -8,6 +8,8 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class ASWeapon;
+class USHealth;
 
 UCLASS()
 class COOPGAME_API ASCharacter : public ACharacter
@@ -17,6 +19,8 @@ class COOPGAME_API ASCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
+
+    virtual FVector GetPawnViewLocation() const override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -38,10 +42,47 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USpringArmComponent* SpringArmComp;
 
+    bool bWantsToZoom;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Player")
+    float ZoomedFOV;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.0, ClampMax = 100.0))
+    float ZoomInterpSpeed;
+
+    float DefaultFOV;
+
+    ASWeapon* CurrentWeapon;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Player")
+    TSubclassOf<ASWeapon> StarterWeaponClass;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+    FName SocketName;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    USHealth* HealthComponent;
+
+protected:
+
+    void BeginZoom();
+
+    void EndZoom();
+
+    void StartFire();
+
+    void StopFire();
+
+    UFUNCTION()
+    void TakeHealthChanged(USHealth* HealthComp, float Health, float HelathDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Player")
+    bool bDied;
 };
