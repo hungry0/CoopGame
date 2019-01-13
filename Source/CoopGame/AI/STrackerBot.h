@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "STrackerBot.generated.h"
 
+class UParticleSystem;
+
 UCLASS()
 class COOPGAME_API ASTrackerBot : public APawn
 {
@@ -37,7 +39,28 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     float RequiedDistanceToTarget;
 
+    UPROPERTY(VisibleAnywhere, Category = "AI")
+    USHealth* HealthComp;
+
+    UMaterialInstanceDynamic* MatInst;
+
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    UParticleSystem* ExplosionEffect;
+
+    bool bExploded;
+
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    float ExplosionRadius;
+
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    float ExplosionDamage;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+    UFUNCTION()
+    void OnHealthChanged(USHealth* OwningHealthComp, float Health, float HelathDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+    void SelfDestruct();
 };
