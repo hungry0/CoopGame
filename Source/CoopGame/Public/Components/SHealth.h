@@ -18,7 +18,7 @@ public:
 	// Sets default values for this component's properties
 	USHealth();
 
-    UPROPERTY(BlueprintReadOnly, Category = "HealthComponent")
+    UPROPERTY(Replicated, BlueprintReadOnly, Category = "HealthComponent")
     float Health;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
@@ -38,4 +38,7 @@ public:
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnHealthChangedSignature OnHealthChanged;
+public:
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 };

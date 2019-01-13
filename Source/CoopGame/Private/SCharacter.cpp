@@ -8,6 +8,7 @@
 #include "Components/CapsuleComponent.h"
 #include "CoopGame.h"
 #include "SHealth.h"
+#include "UnrealNetwork.h"
 
 
 // Sets default values
@@ -45,6 +46,14 @@ FVector ASCharacter::GetPawnViewLocation() const
     return Super::GetPawnViewLocation();
 }
 
+void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(ASCharacter, CurrentWeapon);
+    DOREPLIFETIME(ASCharacter, bDied);
+}
+
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
@@ -54,10 +63,14 @@ void ASCharacter::BeginPlay()
     Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
     CurrentWeapon = GetWorld()->SpawnActor<ASWeapon>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, Param);
-    if (CurrentWeapon)
+
+    if (Role == ROLE_Authority)
     {
-        CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-        CurrentWeapon->SetOwner(this);
+        if (CurrentWeapon)
+        {
+            CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+            CurrentWeapon->SetOwner(this);
+        }
     }
 
     HealthComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::TakeHealthChanged);

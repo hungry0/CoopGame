@@ -22,6 +22,9 @@ public:
 
     virtual FVector GetPawnViewLocation() const override;
 
+
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -52,6 +55,7 @@ protected:
 
     float DefaultFOV;
 
+    UPROPERTY(Replicated)
     ASWeapon* CurrentWeapon;
 
     UPROPERTY(EditDefaultsOnly, Category = "Player")
@@ -83,6 +87,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Player")
+    UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
     bool bDied;
 };

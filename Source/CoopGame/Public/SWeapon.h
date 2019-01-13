@@ -11,6 +11,19 @@ class UDamageType;
 class UParticleSystem;
 class UCameraShake;
 
+USTRUCT()
+struct FHitScanTrace
+{
+    GENERATED_BODY()
+public:
+
+    UPROPERTY()
+    TEnumAsByte<EPhysicalSurface> SurfaceType;
+
+    UPROPERTY()
+    FVector_NetQuantize TraceTo;
+};
+
 UCLASS()
 class COOPGAME_API ASWeapon : public AActor
 {
@@ -20,9 +33,12 @@ public:
     // Sets default values for this actor's properties
     ASWeapon();
 
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
     void PlayEffects(FVector TracerEnd);
 
+    void PlayImpactEffects(EPhysicalSurface SurfaceType, FVector ImpactPoint);
 
     virtual void BeginPlay() override;
 
@@ -67,10 +83,19 @@ protected:
 
     float TimeBetweenShots;
 
+    UPROPERTY(ReplicatedUsing=OnRep_HitScanTrace)
+    FHitScanTrace HitScanTrace;
+
+    UFUNCTION()
+    void OnRep_HitScanTrace();
+
 public:
 
     UFUNCTION(BlueprintCallable, Category = "Weapon")
     void Fire();
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void ServerFire();
 
     void StartFire();
 
