@@ -18,8 +18,11 @@ public:
 	// Sets default values for this component's properties
 	USHealth();
 
-    UPROPERTY(Replicated, BlueprintReadOnly, Category = "HealthComponent")
+    UPROPERTY(ReplicatedUsing = OnRep_Health, BlueprintReadOnly, Category = "HealthComponent")
     float Health;
+
+    UFUNCTION()
+    void OnRep_Health(float OldHealth);
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
     float DefaultHealth;

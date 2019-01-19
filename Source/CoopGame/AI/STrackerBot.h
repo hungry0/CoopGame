@@ -7,6 +7,8 @@
 #include "STrackerBot.generated.h"
 
 class UParticleSystem;
+class USphereComponent;
+class USoundCue;
 
 UCLASS()
 class COOPGAME_API ASTrackerBot : public APawn
@@ -16,6 +18,9 @@ class COOPGAME_API ASTrackerBot : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ASTrackerBot();
+
+
+    virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,6 +47,9 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "AI")
     USHealth* HealthComp;
 
+    UPROPERTY(VisibleAnywhere, Category = "AI")
+    USphereComponent* SphereComp;
+
     UMaterialInstanceDynamic* MatInst;
 
     UPROPERTY(EditDefaultsOnly, Category = "AI")
@@ -49,11 +57,26 @@ protected:
 
     bool bExploded;
 
+    bool bStartedSelfDestruction;
+
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    float SelfDamageInternal;
+
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     float ExplosionRadius;
 
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     float ExplosionDamage;
+
+    FTimerHandle TimerHandle_SelfDamage;
+
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    USoundCue* SelfDestructSound;
+
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    USoundCue* ExplodeSound;
+
+    void DamageSelf();
 
 public:	
 	// Called every frame

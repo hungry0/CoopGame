@@ -18,6 +18,13 @@ USHealth::USHealth()
 }
 
 
+void USHealth::OnRep_Health(float OldHealth)
+{
+    float Damage = OldHealth - Health;
+
+    OnHealthChanged.Broadcast(this, Health, Damage, nullptr, nullptr, nullptr);
+}
+
 // Called when the game starts
 void USHealth::BeginPlay()
 {
