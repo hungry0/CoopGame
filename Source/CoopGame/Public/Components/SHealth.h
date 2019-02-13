@@ -41,7 +41,10 @@ public:
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnHealthChangedSignature OnHealthChanged;
-public:
+
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+    UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+    void Heal(float HealAmount);
 
 };

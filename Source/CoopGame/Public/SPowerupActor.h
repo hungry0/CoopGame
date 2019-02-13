@@ -29,12 +29,21 @@ protected:
 
     float TicksProcessed;
 
+    UPROPERTY(ReplicatedUsing=OnRep_PowerupActive)
+    bool bIsPowerupActive;
+
+    UFUNCTION()
+    void OnRep_PowerupActive();
+
     UFUNCTION()
     void OnTickPowerup();
 
 public:
 
     void ActivatePowerup();
+
+    UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
+    void OnPowerupStateChanged(bool bNewIsActive);
 
     UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
     void OnActivated();
@@ -45,4 +54,6 @@ public:
     UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
     void OnExpired();
 	
+
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
