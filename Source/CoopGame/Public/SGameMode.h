@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "SGameState.h"
 #include "SGameMode.generated.h"
 
 /**
@@ -17,6 +18,8 @@ class COOPGAME_API ASGameMode : public AGameModeBase
 protected:
 
     FTimerHandle TimerHandle_BotSpawner;
+
+    FTimerHandle TimerHandle_NextWaveStart;
 
     // Bots to spawn in current wave.
     int32 NrOfBotsToSpawn;
@@ -38,6 +41,14 @@ protected:
     void EndWave();
 	
     void PrepareForNextWave();
+
+    void CheckWaveState();
+
+    void CheckPlayerAlive();
+
+    void GameOver();
+
+    void SetWaveState(EWaveState NewState);
 	
 	
 public:
@@ -46,4 +57,5 @@ public:
 
     virtual void StartPlay() override;
 
+    virtual void Tick(float DeltaSeconds) override;
 };
