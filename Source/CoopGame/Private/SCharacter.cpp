@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SCharacter.h"
-#include "../../../UE_4.21/Engine/Source/Runtime/Engine/Classes/Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "SWeapon.h"
@@ -9,6 +8,7 @@
 #include "CoopGame.h"
 #include "SHealth.h"
 #include "UnrealNetwork.h"
+#include "Camera/CameraComponent.h"
 
 
 // Sets default values
@@ -89,7 +89,6 @@ void ASCharacter::MoveRight(float Value)
 void ASCharacter::BeginCrouth()
 {
     Crouch();
-
 }
 
 void ASCharacter::EndCrouth()
@@ -146,7 +145,6 @@ void ASCharacter::Tick(float DeltaTime)
     float NewFOV = FMath::FInterpTo(CameraComp->FieldOfView, TargetFOV, DeltaTime, ZoomInterpSpeed);
 
     CameraComp->SetFieldOfView(NewFOV);
-
 }
 
 // Called to bind functionality to input

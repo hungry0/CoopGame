@@ -4,6 +4,8 @@
 #include "Engine/EngineTypes.h"
 #include "SHealth.h"
 #include "SGameState.h"
+#include "SPlayerState.h"
+#include "SCharacter.h"
 
 ASGameMode::ASGameMode()
 {
@@ -13,6 +15,7 @@ ASGameMode::ASGameMode()
     PrimaryActorTick.TickInterval = 1.0f;
 
     GameStateClass = ASGameState::StaticClass();
+    PlayerStateClass = ASPlayerState::StaticClass();
 }
 
 void ASGameMode::StartWave()
@@ -50,6 +53,8 @@ void ASGameMode::PrepareForNextWave()
     GetWorldTimerManager().SetTimer(TimerHandle_NextWaveStart, this, &ASGameMode::StartWave, TimeBetweenWaves, false);
 
     SetWaveState(EWaveState::WaitingToStart);
+
+    RestartDeadPlayer();
 }
 
 
@@ -94,7 +99,7 @@ void ASGameMode::CheckPlayerAlive()
         {
             APawn* MyPawn = PC->GetPawn();
             USHealth* Health = Cast<USHealth>(PC->GetComponentByClass(USHealth::StaticClass()));
-            if (ensure(Health) && Health->GetHealth() > 0)
+            if (Health && Health->GetHealth() > 0)
             {
                 return;
             }
@@ -120,6 +125,19 @@ void ASGameMode::SetWaveState(EWaveState NewState)
     if (ensureAlways(GS))
     {
         GS->SetWaveState(NewState);
+    }
+}
+
+void ASGameMode::RestartDeadPlayer()
+{
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+    {
+        APlayerController* PC = It->Get();
+        ASCharacter* MyPawn = Cast<ASCharacter>(PC->GetPawn());
+        if (PC && (MyPawn == nullptr || MyPawn->bDied))
+        {
+            RestartPlayer(PC);
+        }
     }
 }
 

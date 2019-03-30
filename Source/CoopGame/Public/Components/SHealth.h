@@ -27,6 +27,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
     float DefaultHealth;
 
+    bool bDead;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
