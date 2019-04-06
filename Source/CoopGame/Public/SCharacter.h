@@ -73,10 +73,6 @@ protected:
 
     void EndZoom();
 
-    void StartFire();
-
-    void StopFire();
-
     UFUNCTION()
     void TakeHealthChanged(USHealth* HealthComp, float Health, float HelathDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
@@ -89,4 +85,10 @@ public:
 
     UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
     bool bDied;
+
+    UFUNCTION(BlueprintCallable, Category = "Player")
+    void StartFire();
+
+    UFUNCTION(BlueprintCallable, Category = "Player")
+    void StopFire();
 };

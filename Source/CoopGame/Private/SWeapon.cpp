@@ -37,6 +37,8 @@ ASWeapon::ASWeapon()
 
     MinNetUpdateFrequency = 33.0f;
     NetUpdateFrequency = 66.0f;
+
+    BulletSpherd = 1.0f;
 }
 
 void ASWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -71,6 +73,11 @@ void ASWeapon::Fire()
     MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
     FVector ShotDirection = EyeRotation.Vector();
+
+    float HalfRad = FMath::DegreesToRadians(BulletSpread);
+    ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
+
+
     FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
 
     FCollisionQueryParams QueryParams;
