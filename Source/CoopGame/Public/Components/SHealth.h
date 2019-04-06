@@ -29,6 +29,9 @@ public:
 
     bool bDead;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HealthComponent")
+    uint8 TeamNum;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -50,5 +53,8 @@ public:
     void Heal(float HealAmount);
 
     float GetHealth() const;
+
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "HealthComponent")
+    static bool isFriendly(AActor* ActorA, AActor* ActorB);
 
 };

@@ -38,7 +38,7 @@ ASWeapon::ASWeapon()
     MinNetUpdateFrequency = 33.0f;
     NetUpdateFrequency = 66.0f;
 
-    BulletSpherd = 1.0f;
+    BulletSpread = 1.0f;
 }
 
 void ASWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -102,7 +102,7 @@ void ASWeapon::Fire()
             ActualDamage *= 2.0f;
         }
 
-        UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, HitResult, GetOwner()->GetInstigatorController(), this, DamageType);
+        UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, HitResult, GetOwner()->GetInstigatorController(), MyOwner, DamageType);
 
         PlayImpactEffects(SurfaceType, HitResult.ImpactPoint);
 

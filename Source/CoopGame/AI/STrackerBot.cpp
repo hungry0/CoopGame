@@ -35,8 +35,10 @@ ASTrackerBot::ASTrackerBot()
     bAccelChange = true;
     MovementForce = 1000.0f;
     RequiedDistanceToTarget = 100.0f;
-    ExplosionRadius = 100.0f;
-    ExplosionDamage = 100.0f;
+
+    ExplosionRadius = 350.0f;
+    ExplosionDamage = 60.0f;
+
     SelfDamageInternal = 0.25f;
 
     bStartedSelfDestruction = false;
@@ -57,11 +59,36 @@ void ASTrackerBot::BeginPlay()
 
 FVector ASTrackerBot::GetNextPathPoint()
 {
-    ACharacter* PlayerPawn = UGameplayStatics::GetPlayerCharacter(this, 0);
+    AActor* BestTarget = nullptr;
+    float NearestTargetDistance = FLT_MAX;
 
-    if (PlayerPawn)
+    for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; It++)
     {
-        UNavigationPath* NavPath = UNavigationSystem::FindPathToActorSynchronously(this, GetActorLocation(), PlayerPawn);
+        APawn* TestPawn = It->Get();
+        if (TestPawn == nullptr || USHealth::isFriendly(TestPawn, this))
+        {
+            continue;
+        }
+
+        USHealth* TestPawnHealthComp = Cast<USHealth>(TestPawn->GetComponentByClass(USHealth::StaticClass()));
+
+        if (TestPawn && TestPawnHealthComp->GetHealth() > 0)
+        {
+            float distance = (TestPawn->GetTargetLocation() - this->GetActorLocation()).Size();
+            if (distance < NearestTargetDistance)
+            {
+                NearestTargetDistance = distance;
+                BestTarget = TestPawn;
+            }
+        }
+    }
+
+    if (BestTarget)
+    {
+        UNavigationPath* NavPath = UNavigationSystem::FindPathToActorSynchronously(this, GetActorLocation(), BestTarget);
+
+        GetWorldTimerManager().ClearTimer(TimerHandle_RefreshPath);
+        GetWorldTimerManager().SetTimer(TimerHandle_RefreshPath, this, &ASTrackerBot::RefreshPath, 5.0f, false);
 
         if (NavPath->PathPoints.Num() > 1)
         {
@@ -70,6 +97,11 @@ FVector ASTrackerBot::GetNextPathPoint()
     }
 
     return GetActorLocation();
+}
+
+void ASTrackerBot::RefreshPath()
+{
+    NextPathPoint = GetNextPathPoint();
 }
 
 void ASTrackerBot::DamageSelf()
@@ -129,7 +161,7 @@ void ASTrackerBot::NotifyActorBeginOverlap(AActor* OtherActor)
     if (!bStartedSelfDestruction && !bExploded)
     {
         ASCharacter* PlayerPawn = Cast<ASCharacter>(OtherActor);
-        if (PlayerPawn)
+        if (PlayerPawn && !USHealth::isFriendly(OtherActor, this))
         {
             GetWorldTimerManager().SetTimer(TimerHandle_SelfDamage, this, &ASTrackerBot::DamageSelf, SelfDamageInternal, true, 0.0f);
         }

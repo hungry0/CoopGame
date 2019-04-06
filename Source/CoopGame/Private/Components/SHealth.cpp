@@ -16,6 +16,8 @@ USHealth::USHealth()
     DefaultHealth = 100.0f;
     bDead = false;
 
+    TeamNum = 255;
+
     SetIsReplicated(true);
 }
 
@@ -49,6 +51,11 @@ void USHealth::BeginPlay()
 void USHealth::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
     if (Damage <= 0.0f || bDead)
+    {
+        return;
+    }
+
+    if (DamagedActor != DamageCauser && isFriendly(DamagedActor, DamageCauser))
     {
         return;
     }
@@ -103,5 +110,24 @@ void USHealth::Heal(float HealAmount)
 float USHealth::GetHealth() const
 {
     return Health;
+}
+
+bool USHealth::isFriendly(AActor* ActorA, AActor* ActorB)
+{
+    if (ActorA == nullptr || ActorB == nullptr)
+    {
+        return true;
+    }
+
+    USHealth* healthA = Cast<USHealth>(ActorA->GetComponentByClass(USHealth::StaticClass()));
+    USHealth* healthB = Cast<USHealth>(ActorB->GetComponentByClass(USHealth::StaticClass()));
+
+    if (healthA == nullptr || healthB == nullptr)
+    {
+        return true;
+    }
+
+    return healthA->TeamNum == healthB->TeamNum;
+
 }
 
