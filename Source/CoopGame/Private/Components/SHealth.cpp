@@ -128,6 +128,5 @@ bool USHealth::isFriendly(AActor* ActorA, AActor* ActorB)
     }
 
     return healthA->TeamNum == healthB->TeamNum;
-
 }
 

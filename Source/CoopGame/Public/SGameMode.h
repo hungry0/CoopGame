@@ -30,6 +30,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "GameMode")
     float TimeBetweenWaves;
+
+    UPROPERTY(EditDefaultsOnly, Category = "GameMode")
+    float TimeBetweenSpawn;
 	
 protected:
 

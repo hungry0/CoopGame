@@ -56,5 +56,4 @@ public:
 
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "HealthComponent")
     static bool isFriendly(AActor* ActorA, AActor* ActorB);
-
 };

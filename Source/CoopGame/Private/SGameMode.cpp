@@ -10,6 +10,7 @@
 ASGameMode::ASGameMode()
 {
     TimeBetweenWaves = 2.0f;
+    TimeBetweenSpawn = 5.0f;
 
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.TickInterval = 1.0f;
@@ -18,13 +19,22 @@ ASGameMode::ASGameMode()
     PlayerStateClass = ASPlayerState::StaticClass();
 }
 
+void ASGameMode::StartPlay()
+{
+    Super::StartPlay();
+
+    PrepareForNextWave();
+
+    CheckPlayerAlive();
+}
+
 void ASGameMode::StartWave()
 {
     WaveCount++;
 
     NrOfBotsToSpawn = 2 * WaveCount;
 
-    GetWorldTimerManager().SetTimer(TimerHandle_BotSpawner, this, &ASGameMode::SpawnNewBot, 1.0f, true, 0.0f);
+    GetWorldTimerManager().SetTimer(TimerHandle_BotSpawner, this, &ASGameMode::SpawnNewBot, TimeBetweenSpawn, true, 0.0f);
 
     SetWaveState(EWaveState::WaveInProgress);
 }
@@ -139,15 +149,6 @@ void ASGameMode::RestartDeadPlayer()
             RestartPlayer(PC);
         }
     }
-}
-
-void ASGameMode::StartPlay()
-{
-    Super::StartPlay();
-
-    PrepareForNextWave();
-
-    CheckPlayerAlive();
 }
 
 void ASGameMode::Tick(float DeltaSeconds)
